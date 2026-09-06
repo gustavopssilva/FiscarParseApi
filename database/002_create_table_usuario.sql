@@ -1,16 +1,16 @@
-create table if not exists usuario (
-    id bigserial primary key,
-    token uuid not null default gen_random_uuid () unique,
-    registro timestamp not null default current_timestamp,
+CREATE TABLE IF NOT EXISTS usuario (
+    id bigserial PRIMARY KEY,
+    token uuid NOT NULL DEFAULT gen_random_uuid () UNIQUE,
+    registro timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ultima_solicitacao timestamp,
-    perfil varchar references perfil (nome_perfil),
-    ativo boolean not null default true
+    perfil varchar REFERENCES perfil (nome_perfil),
+    ativo boolean NOT NULL DEFAULT TRUE
 );
 
-insert into usuario (token, registro, perfil)
-    values ('550e8400-e29b-41d4-a716-446655440002', now(), 'admin')
-on conflict (token)
-    do nothing;
+INSERT INTO usuario (token, registro, perfil)
+    VALUES ('550e8400-e29b-41d4-a716-446655440002', now(), 'admin')
+ON CONFLICT (token)
+    DO NOTHING;
 
 --select * from usuario;
 --drop table usuario cascade;
