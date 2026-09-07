@@ -1,6 +1,9 @@
+com/ajudaqui/domain/Usuario.class
+com/ajudaqui/handler/LambdaHandler$2.class
+com/ajudaqui/App.class
 com/ajudaqui/enums/Query.class
 com/ajudaqui/config/Database.class
 com/ajudaqui/repository/UsuarioRepository.class
-com/ajudaqui/domain/Usuario.class
-com/ajudaqui/App.class
-com/ajudaqui/resource/CuponFiscalService.class
+com/ajudaqui/resource/CuponFiscalResource.class
+com/ajudaqui/handler/LambdaHandler$1.class
+com/ajudaqui/handler/LambdaHandler.class
