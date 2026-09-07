@@ -2,5 +2,5 @@
 /home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/main/java/com/ajudaqui/config/Database.java
 /home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/main/java/com/ajudaqui/domain/Usuario.java
 /home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/main/java/com/ajudaqui/enums/Query.java
-/home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/main/java/com/ajudaqui/service/CuponFiscalService.java
-/home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/main/java/com/ajudaqui/service/UsuarioRepository.java
+/home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/main/java/com/ajudaqui/repository/UsuarioRepository.java
+/home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/main/java/com/ajudaqui/resource/CuponFiscalService.java

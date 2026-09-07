@@ -1,6 +1,6 @@
 com/ajudaqui/enums/Query.class
 com/ajudaqui/config/Database.class
+com/ajudaqui/repository/UsuarioRepository.class
 com/ajudaqui/domain/Usuario.class
-com/ajudaqui/service/UsuarioRepository.class
-com/ajudaqui/service/CuponFiscalService.class
 com/ajudaqui/App.class
+com/ajudaqui/resource/CuponFiscalService.class

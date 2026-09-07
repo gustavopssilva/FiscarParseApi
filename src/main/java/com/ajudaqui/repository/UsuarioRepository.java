@@ -1,13 +1,7 @@
-package com.ajudaqui.service;
+package com.ajudaqui.repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.sql.*;
+import java.util.*;
 
 import com.ajudaqui.config.Database;
 import com.ajudaqui.domain.Usuario;
@@ -109,7 +103,7 @@ public class UsuarioRepository {
 
     try (Connection connection = Database.getConnection();
         PreparedStatement statement = connection.prepareStatement(
-            Query.ALTERNAR_PERFIL.getQuery())) {
+            Query.ALTERAR_PERFIL.getQuery())) {
 
       statement.setObject(1, UUID.fromString(tokenSolicitante));
       statement.setObject(2, UUID.fromString(tokenUsuario));

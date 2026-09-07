@@ -6,8 +6,8 @@ public enum Query {
   REGISTAR_USUARIO("SELECT criar_usuario(?)"),
   VALIDA_CONSULTA("CALL validador_consulta(?,?);"),
 
-  ALTERNAR_STATUS("SELECT alternar_status(?,?)"),
-  ALTERNAR_PERFIL("SELECT alternar_perfil(?,?,?)");
+  ALTERNAR_STATUS("CALL alternar_status(?,?)"),
+  ALTERAR_PERFIL("CALL alterar_perfil(?,?,?)");
 
   private final String query;
 
