@@ -58,6 +58,7 @@ public class UsuarioRepository {
               resultSet.getTimestamp("ultima_solicitacao"));
           usuario.setIntervalo(resultSet.getInt("intervalo"));
           usuario.setAtivo(resultSet.getBoolean("ativo"));
+          usuario.setPerfil(resultSet.getString("perfil"));
 
           usuarios.add(usuario);
         }

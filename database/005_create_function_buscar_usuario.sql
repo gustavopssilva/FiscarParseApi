@@ -1,17 +1,32 @@
+drop function if exists busca_usuarios (boolean);
+
 create or replace function busca_usuarios (p_ativo boolean default null)
-    returns setof usuario
-    language plpgsql
-    as $$
-begin
-    return QUERY
+    returns table (
+        id bigint,
+        token uuid,
+        registro timestamp,
+        ultima_solicitacao timestamp,
+        perfil varchar,
+        intervalo integer,
+        ativo boolean
+    )
+    language sql
+    stable
+as $$
     select
-        *
+        u.id,
+        u.token,
+        u.registro,
+        u.ultima_solicitacao,
+        u.perfil,
+        p.intervalo,
+        u.ativo
     from
-        usuario
+        usuario u
+        left join perfil p on p.nome_perfil = u.perfil
     where
         p_ativo is null
-        or ativo = p_ativo;
-end;
+        or u.ativo = p_ativo;
 $$;
 
 

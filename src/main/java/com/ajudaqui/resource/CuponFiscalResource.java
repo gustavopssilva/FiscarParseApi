@@ -1,6 +1,7 @@
 package com.ajudaqui.resource;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.ajudaqui.domain.Usuario;
 import com.ajudaqui.model.UrlInput;
@@ -21,9 +22,21 @@ public class CuponFiscalResource {
     return fiscalParseService.parseToJson(new UrlInput(url));
   }
 
-  public List<Usuario> getAllUsers(Boolean ativo) {
+  public String getAllUsers(Boolean ativo) {
+    List<Usuario> usuarios = repository.buscarTodos(ativo);
+    if (usuarios.isEmpty()) {
+      return "Nenhum usuário encontrado.";
+    }
+    return usuarios.stream()
+        .map(CuponFiscalResource::formatarUsuario)
+        .collect(Collectors.joining("\n"));
+  }
 
-    return repository.buscarTodos(ativo);
+  private static String formatarUsuario(Usuario usuario) {
+    return String.format(
+        "id=%s token=%s perfil=%s intervalo=%s ativo=%s registro=%s ultima_solicitacao=%s",
+        usuario.getId(), usuario.getToken(), usuario.getPerfil(), usuario.getIntervalo(),
+        usuario.getAtivo(), usuario.getRegistro(), usuario.getUltimaSolicitacao());
   }
 
   public String register(String perfil) {

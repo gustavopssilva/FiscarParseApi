@@ -2,7 +2,7 @@ package com.ajudaqui.enums;
 
 public enum Query {
 
-  BUSCAR_USUARIOS("SELECT busca_usuarios(?)"),
+  BUSCAR_USUARIOS("SELECT * FROM busca_usuarios(?)"),
   REGISTAR_USUARIO("SELECT criar_usuario(?)"),
   VALIDA_CONSULTA("CALL validador_consulta(?,?);"),
 

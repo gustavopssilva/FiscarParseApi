@@ -10,6 +10,7 @@ public class Usuario {
   private Timestamp ultimaSolicitacao;
   private Integer intervalo;
   private Boolean ativo;
+  private String perfil;
 
   public Long getId() {
     return id;
@@ -57,6 +58,14 @@ public class Usuario {
 
   public void setAtivo(Boolean ativo) {
     this.ativo = ativo;
+  }
+
+  public String getPerfil() {
+    return perfil;
+  }
+
+  public void setPerfil(String perfil) {
+    this.perfil = perfil;
   }
 
 }

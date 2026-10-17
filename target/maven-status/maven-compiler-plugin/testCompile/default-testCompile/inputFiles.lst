@@ -1,0 +1,5 @@
+/home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/test/java/com/ajudaqui/AppTest.java
+/home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/test/java/com/ajudaqui/enums/QueryTest.java
+/home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/test/java/com/ajudaqui/handler/LambdaHandlerTest.java
+/home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/test/java/com/ajudaqui/resource/CuponFiscalResourceTest.java
+/home/gps2/pessoal/projetos/api/ajudaqui-fiscal-lambda/src/test/java/com/ajudaqui/support/FakeUsuarioRepository.java

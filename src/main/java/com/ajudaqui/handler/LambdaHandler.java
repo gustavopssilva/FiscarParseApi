@@ -12,6 +12,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
 
   private final ObjectMapper objectMapper = new ObjectMapper();
+  private final CuponFiscalResource resource;
+
+  public LambdaHandler() {
+    this(new CuponFiscalResource(new UsuarioRepository()));
+  }
+
+  public LambdaHandler(CuponFiscalResource resource) {
+    this.resource = resource;
+  }
 
   @Override
   public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
@@ -37,8 +46,6 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
       }
 
       context.getLogger().log("Operação: " + operacao);
-
-      CuponFiscalResource resource = new CuponFiscalResource(new UsuarioRepository());
 
       Object resultado = null;
 
