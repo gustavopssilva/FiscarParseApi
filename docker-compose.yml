@@ -1,0 +1,11 @@
+# Ambiente local: imagem da Lambda (Runtime Interface Client na porta 8080 do container)
+# Banco: Supabase, configurado no arquivo .env (ver .env.example)
+# Subir: docker compose up --build
+# Invocar: curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{...}'
+services:
+  lambda:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "9000:8080"

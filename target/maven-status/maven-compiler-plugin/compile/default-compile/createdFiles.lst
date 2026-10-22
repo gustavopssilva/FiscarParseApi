@@ -7,3 +7,4 @@ com/ajudaqui/repository/UsuarioRepository.class
 com/ajudaqui/resource/CuponFiscalResource.class
 com/ajudaqui/handler/LambdaHandler$1.class
 com/ajudaqui/handler/LambdaHandler.class
+com/ajudaqui/domain/TimestampIsoSerializer.class

@@ -188,25 +188,28 @@ To deploy this to AWS Lambda, you need to:
 
 ### Formato do Evento (JSON)
 
-O Lambda recebe eventos com este formato:
+O pedido tem `operacao` e, opcionalmente, `params` com os argumentos:
 
 ```json
 {
-  "operacao": "buscarCupon",
-  "token": "seu-token-uuid",
-  "url": "https://exemplo.com/cupom"
+  "operacao": "getAllUsers",
+  "params": { "ativo": "true" }
 }
 ```
 
+Dois modos de entrada, tratados pelo `LambdaHandler`:
+- **Invocação direta** (teste local, Postman, `curl` na porta 9000): o evento é o próprio pedido, como acima.
+- **API Gateway (proxy)**: o pedido chega em `event.body` como string com o mesmo JSON. O handler faz o parse quando `body` existe.
+
 ### Operações Suportadas
 
-| Operação | Parâmetros | Retorno |
-|----------|-----------|---------|
+| Operação | Params | Retorno |
+|----------|--------|---------|
 | `buscarCupon` | token, url | JSON do cupom fiscal |
 | `registrar` | perfil | UUID do novo usuário |
 | `mudarStatus` | tokenSolicitante, tokenUsuario | Mensagem de sucesso |
 | `mudatrPerfil` | tokenSolicitante, tokenUsuario, perfil | Mensagem de sucesso |
-| `getAllUsers` | ativo (opcional) | Lista de usuários |
+| `getAllUsers` | ativo (opcional, `"true"`/`"false"`) | Array JSON de usuários (datas em ISO-8601) |
 
 ### Resposta do Lambda
 
@@ -214,9 +217,11 @@ O Lambda recebe eventos com este formato:
 ```json
 {
   "statusCode": 200,
-  "body": { ... resultado ... }
+  "headers": { "Content-Type": "application/json" },
+  "body": "[{\"id\":1,\"perfil\":\"admin\",...}]"
 }
 ```
+O `body` é sempre string (exigência da integração proxy do API Gateway).
 
 **Erro (HTTP 400/500):**
 ```json
@@ -247,6 +252,17 @@ O Lambda recebe eventos com este formato:
    DB_USER=seu_usuario
    DB_PASSWORD=sua_senha
    ```
+
+## Teste Local com Docker
+
+1. Copie `.env.example` para `.env` e preencha com as credenciais do Supabase (o `.env` não vai para o git).
+2. Suba: `docker compose up --build` (Lambda na porta 9000).
+3. Invoque:
+   ```bash
+   curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
+     -d '{"operacao":"getAllUsers","params":{"ativo":"true"}}'
+   ```
+   O `2015-03-31` é a versão fixa da API de invocação da Lambda; o Runtime Interface Emulator da imagem expõe o mesmo caminho.
 
 ## Development Tips
 

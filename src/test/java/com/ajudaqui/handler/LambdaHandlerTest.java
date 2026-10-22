@@ -18,6 +18,8 @@ import com.ajudaqui.resource.CuponFiscalResource;
 import com.ajudaqui.support.FakeUsuarioRepository;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 class LambdaHandlerTest {
 
@@ -36,8 +38,16 @@ class LambdaHandlerTest {
   }
 
   @Test
-  void semBodyRetornaErro400() {
+  void semBodyNemOperacaoRetornaErro400() {
     Map<String, Object> resposta = handler.handleRequest(evento(null), context);
+
+    assertEquals(400, resposta.get("statusCode"));
+    assertTrue(resposta.get("body").toString().contains("'operacao' é obrigatório"));
+  }
+
+  @Test
+  void bodyVazioRetornaErro400() {
+    Map<String, Object> resposta = handler.handleRequest(evento(""), context);
 
     assertEquals(400, resposta.get("statusCode"));
     assertTrue(resposta.get("body").toString().contains("Body é obrigatório"));
@@ -114,7 +124,7 @@ class LambdaHandlerTest {
   }
 
   @Test
-  void getAllUsersDevolveTextoSemJsonNoBody() {
+  void getAllUsersDevolveBodyJson() throws Exception {
     Usuario usuario = new Usuario();
     usuario.setId(1L);
     usuario.setPerfil("admin");
@@ -126,7 +136,8 @@ class LambdaHandlerTest {
 
     assertEquals(200, resposta.get("statusCode"));
     String body = (String) resposta.get("body");
-    assertTrue(body.contains("perfil=admin"));
+    JsonNode json = new ObjectMapper().readTree(body);
+    assertEquals("admin", json.get(0).get("perfil").asText());
     assertFalse(body.contains("Usuario@"));
   }
 
@@ -146,6 +157,18 @@ class LambdaHandlerTest {
 
     assertEquals(500, resposta.get("statusCode"));
     assertTrue(resposta.get("body").toString().contains("falha no banco"));
+  }
+
+  @Test
+  void invocacaoDiretaAceitaOperacaoEParamsNoTopo() {
+    Map<String, Object> evento = new HashMap<>();
+    evento.put("operacao", "getAllUsers");
+    evento.put("params", Map.of("ativo", "true"));
+
+    Map<String, Object> resposta = handler.handleRequest(evento, context);
+
+    assertEquals(200, resposta.get("statusCode"));
+    assertEquals(List.of("buscarTodos:true"), repository.chamadas);
   }
 
   private static Map<String, Object> evento(String body) {

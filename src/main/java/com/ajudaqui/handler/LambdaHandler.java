@@ -27,23 +27,25 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     try {
       context.getLogger().log("Recebido evento: " + event);
 
-      String httpMethod = (String) event.get("httpMethod");
-      String path = (String) event.get("path");
-      String body = (String) event.get("body");
+      // Via API Gateway (proxy) o pedido vem em "body" como string; na invocação direta vem no próprio evento
+      Map<String, Object> payload = event.containsKey("body")
+          ? lerBody((String) event.get("body"))
+          : event;
 
-      context.getLogger().log("Método: " + httpMethod + " | Path: " + path);
-
-      if (body == null || body.isEmpty()) {
+      if (payload == null) {
         return erro(400, "Body é obrigatório");
       }
-
-      Map<String, Object> payload = objectMapper.readValue(body, Map.class);
 
       String operacao = (String) payload.get("operacao");
 
       if (operacao == null || operacao.isEmpty()) {
         return erro(400, "Campo 'operacao' é obrigatório");
       }
+
+      // Argumentos ficam em "params"; sem "params", usa os campos do próprio payload
+      Map<String, Object> params = payload.get("params") instanceof Map
+          ? castParams(payload.get("params"))
+          : payload;
 
       context.getLogger().log("Operação: " + operacao);
 
@@ -52,30 +54,31 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
       switch (operacao) {
         case "buscarCupon":
           resultado = resource.buscaCupon(
-              (String) payload.get("token"),
-              (String) payload.get("url"));
+              (String) params.get("token"),
+              (String) params.get("url"));
           break;
 
         case "registrar":
           resultado = resource.register(
-              (String) payload.get("perfil"));
+              (String) params.get("perfil"));
           break;
 
         case "mudarStatus":
           resultado = resource.mudarStatus(
-              (String) payload.get("tokenSolicitante"),
-              (String) payload.get("tokenUsuario"));
+              (String) params.get("tokenSolicitante"),
+              (String) params.get("tokenUsuario"));
           break;
 
         case "mudatrPerfil":
           resultado = resource.mudatrPerfil(
-              (String) payload.get("tokenSolicitante"),
-              (String) payload.get("tokenUsuario"),
-              (String) payload.get("perfil"));
+              (String) params.get("tokenSolicitante"),
+              (String) params.get("tokenUsuario"),
+              (String) params.get("perfil"));
           break;
 
         case "getAllUsers":
-          Boolean ativo = payload.containsKey("ativo") ? (Boolean) payload.get("ativo") : null;
+          Object ativoValor = params.get("ativo");
+          Boolean ativo = ativoValor == null ? null : Boolean.valueOf(ativoValor.toString());
           resultado = resource.getAllUsers(ativo);
           break;
 
@@ -96,6 +99,18 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     } catch (Exception e) {
       return erro(500, "Erro interno: " + e.getMessage());
     }
+  }
+
+  private Map<String, Object> lerBody(String body) throws java.io.IOException {
+    if (body == null || body.isEmpty()) {
+      return null;
+    }
+    return objectMapper.readValue(body, Map.class);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Map<String, Object> castParams(Object params) {
+    return (Map<String, Object>) params;
   }
 
   private Map<String, Object> sucesso(int statusCode, Object body) {

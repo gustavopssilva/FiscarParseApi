@@ -3,6 +3,8 @@ package com.ajudaqui.domain;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 public class Usuario {
   private Long id;
   private UUID token;
@@ -28,6 +30,7 @@ public class Usuario {
     this.token = token;
   }
 
+  @JsonSerialize(using = TimestampIsoSerializer.class)
   public Timestamp getRegistro() {
     return registro;
   }
@@ -36,6 +39,7 @@ public class Usuario {
     this.registro = registro;
   }
 
+  @JsonSerialize(using = TimestampIsoSerializer.class)
   public Timestamp getUltimaSolicitacao() {
     return ultimaSolicitacao;
   }

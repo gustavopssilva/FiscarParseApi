@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import com.ajudaqui.domain.Usuario;
 import com.ajudaqui.support.FakeUsuarioRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 class CuponFiscalResourceTest {
 
@@ -35,7 +38,8 @@ class CuponFiscalResourceTest {
     String resultado = resource.getAllUsers(true);
 
     assertEquals(List.of("buscarTodos:true"), repository.chamadas);
-    assertTrue(resultado.startsWith("id=1 "));
+    assertTrue(resultado.startsWith("[{"));
+    assertTrue(resultado.contains("\"perfil\":\"admin\""));
   }
 
   @Test
@@ -46,22 +50,34 @@ class CuponFiscalResourceTest {
   }
 
   @Test
-  void getAllUsersFormataUmUsuarioPorLinhaSemJson() {
+  void getAllUsersDevolveArrayJson() throws Exception {
     repository.usuarios = List.of(usuario(1L, "admin", true), usuario(2L, "gratuito", false));
 
     String resultado = resource.getAllUsers(null);
 
-    String[] linhas = resultado.split("\n");
-    assertEquals(2, linhas.length);
-    assertTrue(linhas[0].contains("perfil=admin"));
-    assertTrue(linhas[1].contains("perfil=gratuito"));
-    assertTrue(linhas[1].contains("ativo=false"));
-    assertFalse(resultado.contains("{"));
+    JsonNode json = new ObjectMapper().readTree(resultado);
+    assertTrue(json.isArray());
+    assertEquals(2, json.size());
+    assertEquals("admin", json.get(0).get("perfil").asText());
+    assertEquals("gratuito", json.get(1).get("perfil").asText());
+    assertFalse(json.get(1).get("ativo").asBoolean());
   }
 
   @Test
-  void getAllUsersSemResultadosInformaMensagem() {
-    assertEquals("Nenhum usuário encontrado.", resource.getAllUsers(null));
+  void getAllUsersFormataDatasEmIso8601() throws Exception {
+    Usuario usuario = usuario(1L, "admin", true);
+    usuario.setRegistro(Timestamp.valueOf("2026-10-17 02:29:04.249609"));
+    repository.usuarios = List.of(usuario);
+
+    JsonNode json = new ObjectMapper().readTree(resource.getAllUsers(null));
+
+    assertEquals("2026-10-17T02:29:04.249609", json.get(0).get("registro").asText());
+    assertTrue(json.get(0).get("ultimaSolicitacao").isNull());
+  }
+
+  @Test
+  void getAllUsersSemResultadosDevolveArrayVazio() {
+    assertEquals("[]", resource.getAllUsers(null));
   }
 
   private static Usuario usuario(Long id, String perfil, boolean ativo) {
